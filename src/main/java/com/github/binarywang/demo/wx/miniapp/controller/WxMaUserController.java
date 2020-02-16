@@ -1,5 +1,7 @@
 package com.github.binarywang.demo.wx.miniapp.controller;
 
+import com.github.binarywang.demo.wx.miniapp.WxMaDemoApplication;
+import com.github.binarywang.demo.wx.miniapp.pojo.dto.BaseDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,13 +18,16 @@ import com.github.binarywang.demo.wx.miniapp.config.WxMaConfiguration;
 import com.github.binarywang.demo.wx.miniapp.utils.JsonUtils;
 import me.chanjar.weixin.common.error.WxErrorException;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 微信小程序用户接口
  *
  * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
 @RestController
-@RequestMapping("/wx/user/{appid}")
+@RequestMapping("/api/wx/user")
 public class WxMaUserController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -30,23 +35,30 @@ public class WxMaUserController {
      * 登陆接口
      */
     @GetMapping("/login")
-    public String login(@PathVariable String appid, String code) {
+    public BaseDTO login(String code) {
+        BaseDTO baseDTO = new BaseDTO();
         if (StringUtils.isBlank(code)) {
-            return "empty jscode";
+            baseDTO.setError_code(1);
+            baseDTO.setMsg("empty jscode");
+            return baseDTO;
         }
 
-        final WxMaService wxService = WxMaConfiguration.getMaService(appid);
+        final WxMaService wxService = WxMaConfiguration.getMaService(WxMaDemoApplication.appid);
 
         try {
             WxMaJscode2SessionResult session = wxService.getUserService().getSessionInfo(code);
             this.logger.info(session.getSessionKey());
             this.logger.info(session.getOpenid());
             //TODO 可以增加自己的逻辑，关联业务相关数据
-            return JsonUtils.toJson(session);
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("openid", session.getOpenid());
+            baseDTO.setData(map);
         } catch (WxErrorException e) {
             this.logger.error(e.getMessage(), e);
-            return e.toString();
+            baseDTO.setError_code(1);
+            baseDTO.setMsg(e.toString());
         }
+        return baseDTO;
     }
 
     /**

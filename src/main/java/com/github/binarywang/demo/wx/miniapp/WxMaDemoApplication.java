@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 public class WxMaDemoApplication {
+    public static final String appid = "wx804bacf810756b8d";
 
     public static void main(String[] args) {
         SpringApplication.run(WxMaDemoApplication.class, args);

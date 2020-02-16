@@ -2,7 +2,9 @@ package com.github.binarywang.demo.wx.miniapp.controller;
 
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.constant.WxMaConstants;
+import com.github.binarywang.demo.wx.miniapp.WxMaDemoApplication;
 import com.github.binarywang.demo.wx.miniapp.config.WxMaConfiguration;
+import com.github.binarywang.demo.wx.miniapp.pojo.dto.BaseDTO;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import me.chanjar.weixin.common.bean.result.WxMediaUploadResult;
@@ -22,8 +24,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <pre>
@@ -34,7 +38,7 @@ import java.util.List;
  * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
 @Controller
-@RequestMapping("/wx/maqrcode/{appid}")
+@RequestMapping("/api/wxmaqrcode")
 public class WxMaQRCodeController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -44,20 +48,32 @@ public class WxMaQRCodeController {
      * @return 小程序数据流.
      */
     @GetMapping("/create")
-    public void uploadMedia(@PathVariable String appid, String sence,HttpServletRequest request, HttpServletResponse response) throws WxErrorException, IOException {
-        final WxMaService wxService = WxMaConfiguration.getMaService(appid);
+    public void create(String sence,HttpServletRequest request, HttpServletResponse response) throws WxErrorException, IOException {
+        final WxMaService wxService = WxMaConfiguration.getMaService(WxMaDemoApplication.appid);
         File file = wxService.getQrcodeService().createWxaCodeUnlimit(sence,null);
         byte[] bytes = IOUtils.toByteArray(new FileInputStream(file));
         response.getOutputStream().write(bytes);
     }
 
-    /**
-     * 下载临时素材
-     */
-    @GetMapping("/download/{mediaId}")
-    public File getMedia(@PathVariable String appid, @PathVariable String mediaId) throws WxErrorException {
-        final WxMaService wxService = WxMaConfiguration.getMaService(appid);
+    @RequestMapping("query")
+    public BaseDTO query(String openid,String wxmaqrocdeNo){
+        BaseDTO baseDTO = new BaseDTO();
+        Map<String,String> map = new HashMap<>();
+        map.put("wxmaqrocdeNo",wxmaqrocdeNo);
+        map.put("cardNo","津A88888");
+        map.put("activer","1");
+        baseDTO.setData(map);
+        return baseDTO;
 
-        return wxService.getMediaService().getMedia(mediaId);
     }
+    @RequestMapping("bind")
+    public BaseDTO bind(String openid,String wxmaqrocdeNo,String cardNo){
+        BaseDTO baseDTO = new BaseDTO();
+        Map<String,String> map = new HashMap<>();
+        map.put("wxmaqrocdeNo",wxmaqrocdeNo);
+        baseDTO.setData(map);
+        return baseDTO;
+
+    }
+
 }
