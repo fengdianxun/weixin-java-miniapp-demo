@@ -37,7 +37,7 @@ import java.util.Map;
  *
  * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
-@Controller
+@RestController
 @RequestMapping("/api/wxmaqrcode")
 public class WxMaQRCodeController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -58,11 +58,11 @@ public class WxMaQRCodeController {
     @RequestMapping("query")
     public BaseDTO query(String openid,String wxmaqrocdeNo){
         BaseDTO baseDTO = new BaseDTO();
-        Map<String,String> map = new HashMap<>();
-        map.put("wxmaqrocdeNo",wxmaqrocdeNo);
-        map.put("cardNo","津A88888");
-        map.put("activer","1");
-        baseDTO.setData(map);
+//        Map<String,String> map = new HashMap<>();
+//        map.put("wxmaqrocdeNo",wxmaqrocdeNo);
+//        map.put("cardNo","津A88888");
+//        map.put("activer","1");
+//        baseDTO.setData(map);
         return baseDTO;
 
     }

@@ -5,10 +5,7 @@ import com.github.binarywang.demo.wx.miniapp.pojo.dto.BaseDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
@@ -34,7 +31,7 @@ public class WxMaUserController {
     /**
      * 登陆接口
      */
-    @GetMapping("/login")
+    @RequestMapping("/login")
     public BaseDTO login(String code) {
         BaseDTO baseDTO = new BaseDTO();
         if (StringUtils.isBlank(code)) {
