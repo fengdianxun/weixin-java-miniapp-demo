@@ -27,12 +27,14 @@ import java.util.Map;
 @RequestMapping("/api/wx/user")
 public class WxMaUserController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final static Map<String,String> users = new HashMap<>();
 
     /**
      * 登陆接口
      */
     @RequestMapping("/login")
     public BaseDTO login(String code) {
+        logger.debug("code:"+code);
         BaseDTO baseDTO = new BaseDTO();
         if (StringUtils.isBlank(code)) {
             baseDTO.setError_code(1);
@@ -50,6 +52,7 @@ public class WxMaUserController {
             Map<String, String> map = new HashMap<String, String>();
             map.put("openid", session.getOpenid());
             baseDTO.setData(map);
+            users.put(session.getOpenid(),session.getSessionKey());
         } catch (WxErrorException e) {
             this.logger.error(e.getMessage(), e);
             baseDTO.setError_code(1);
@@ -63,7 +66,7 @@ public class WxMaUserController {
      * 获取用户信息接口
      * </pre>
      */
-    @GetMapping("/info")
+    @RequestMapping("/info")
     public String info(@PathVariable String appid, String sessionKey,
                        String signature, String rawData, String encryptedData, String iv) {
         final WxMaService wxService = WxMaConfiguration.getMaService(appid);
@@ -84,20 +87,23 @@ public class WxMaUserController {
      * 获取用户绑定手机号信息
      * </pre>
      */
-    @GetMapping("/phone")
-    public String phone(@PathVariable String appid, String sessionKey, String signature,
-                        String rawData, String encryptedData, String iv) {
-        final WxMaService wxService = WxMaConfiguration.getMaService(appid);
+    @RequestMapping("/phone")
+    public BaseDTO phone(String openid, String encryptedData, String iv) {
+        final WxMaService wxService = WxMaConfiguration.getMaService(WxMaDemoApplication.appid);
 
-        // 用户信息校验
-        if (!wxService.getUserService().checkUserInfo(sessionKey, rawData, signature)) {
-            return "user check failed";
-        }
+//        // 用户信息校验
+//        if (!wxService.getUserService().checkUserInfo(sessionKey, rawData, signature)) {
+//            return "user check failed";
+//        }
+        String sessionKey = users.get(openid);
 
         // 解密
         WxMaPhoneNumberInfo phoneNoInfo = wxService.getUserService().getPhoneNoInfo(sessionKey, encryptedData, iv);
 
-        return JsonUtils.toJson(phoneNoInfo);
+        BaseDTO baseDTO = new BaseDTO();
+        baseDTO.setData(phoneNoInfo);
+
+        return baseDTO;
     }
 
 }
