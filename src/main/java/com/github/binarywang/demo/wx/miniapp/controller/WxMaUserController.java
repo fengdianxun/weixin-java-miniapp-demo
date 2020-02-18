@@ -89,6 +89,7 @@ public class WxMaUserController {
      */
     @RequestMapping("/phone")
     public BaseDTO phone(String openid, String encryptedData, String iv) {
+        logger.debug("openid:"+openid+" encryptedData:"+encryptedData+" iv:"+iv);
         final WxMaService wxService = WxMaConfiguration.getMaService(WxMaDemoApplication.appid);
 
 //        // 用户信息校验

@@ -67,7 +67,7 @@ public class WxMaQRCodeController {
 
     }
     @RequestMapping("bind")
-    public BaseDTO bind(String openid,String wxmaqrocdeNo,String cardNo){
+    public BaseDTO bind(String openid,String wxmaqrocdeNo,String cardNo,String phone){
         BaseDTO baseDTO = new BaseDTO();
         Map<String,String> map = new HashMap<>();
         map.put("wxmaqrocdeNo",wxmaqrocdeNo);
